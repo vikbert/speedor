@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-const {URL} = require('url');
+const { URL } = require('url');
 const meow = require('meow');
 const speedtest = require('speedtest-net');
 const updateNotifier = require('update-notifier');
@@ -9,51 +9,61 @@ const chalk = require('chalk');
 const logUpdate = require('log-update');
 const logSymbols = require('log-symbols');
 const Ora = require('ora');
+const wifiName = require('wifi-name');
 
-const cli = meow(`
+let wlanName = 'wifi';
+wifiName().then(name => {
+	wlanName = name;
+});
+
+const cli = meow(
+	`
 	Usage
-	  $ speed-test
+	  $ speedor
 
 	Options
 	  --json -j     Output the result as JSON
 	  --bytes -b    Output the result in megabytes per second (MBps)
 	  --verbose -v  Output more detailed information
-`, {
-	flags: {
-		json: {
-			type: 'boolean',
-			alias: 'j'
+`,
+	{
+		flags: {
+			json: {
+				type: 'boolean',
+				alias: 'j',
+			},
+			bytes: {
+				type: 'boolean',
+				alias: 'b',
+			},
+			verbose: {
+				type: 'boolean',
+				alias: 'v',
+			},
 		},
-		bytes: {
-			type: 'boolean',
-			alias: 'b'
-		},
-		verbose: {
-			type: 'boolean',
-			alias: 'v'
-		}
-	}
-});
+	},
+);
 
-updateNotifier({pkg: cli.pkg}).notify();
+updateNotifier({ pkg: cli.pkg }).notify();
 
 const stats = {
 	ping: '',
 	download: '',
-	upload: ''
+	upload: '',
 };
 
 let state = 'ping';
 const spinner = new Ora();
 const unit = cli.flags.bytes ? 'MBps' : 'Mbps';
 const multiplier = cli.flags.bytes ? 1 / 8 : 1;
-const currentDate = chalk.green(new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString());
+const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
 
-const getSpinnerFromState = inputState => inputState === state ? chalk.gray.dim(spinner.frame()) : '  ';
+const getSpinnerFromState = inputState =>
+	inputState === state ? chalk.gray.dim(spinner.frame()) : '  ';
 
 const logError = error => {
 	if (cli.flags.json) {
-		console.error(JSON.stringify({error}));
+		console.error(JSON.stringify({ error }));
 	} else {
 		console.error(logSymbols.error, error);
 	}
@@ -66,7 +76,9 @@ function render() {
 	}
 
 	let output = `
-      Date   ${currentDate}
+      Date   ${chalk.green(currentDate)}
+      ----------------------------
+      Wifi   ${chalk.cyan(wlanName)}
       Ping ${getSpinnerFromState('ping')}${stats.ping}
   Download ${getSpinnerFromState('download')}${stats.download}
     Upload ${getSpinnerFromState('upload')}${stats.upload}`;
@@ -74,9 +86,21 @@ function render() {
 	if (cli.flags.verbose) {
 		output += [
 			'',
-			'    Server   ' + (stats.data === undefined ? '' : chalk.cyan(stats.data.server.host)),
-			'  Location   ' + (stats.data === undefined ? '' : chalk.cyan(stats.data.server.location + chalk.dim(' (' + stats.data.server.country + ')'))),
-			'  Distance   ' + (stats.data === undefined ? '' : chalk.cyan(roundTo(stats.data.server.distance, 1) + chalk.dim(' km')))
+			'    Server   ' +
+				(stats.data === undefined ? '' : chalk.cyan(stats.data.server.host)),
+			'  Location   ' +
+				(stats.data === undefined
+					? ''
+					: chalk.cyan(
+							stats.data.server.location +
+								chalk.dim(' (' + stats.data.server.country + ')'),
+					  )),
+			'  Distance   ' +
+				(stats.data === undefined
+					? ''
+					: chalk.cyan(
+							roundTo(stats.data.server.distance, 1) + chalk.dim(' km'),
+					  )),
 		].join('\n');
 	}
 
@@ -98,7 +122,7 @@ function map(server) {
 	return server;
 }
 
-const st = speedtest({maxTime: 20000});
+const st = speedtest({ maxTime: 20000 });
 
 if (!cli.flags.json) {
 	setInterval(render, 50);
@@ -107,7 +131,7 @@ if (!cli.flags.json) {
 st.once('testserver', server => {
 	if (cli.flags.verbose) {
 		stats.data = {
-			server: map(server)
+			server: map(server),
 		};
 	}
 
@@ -136,14 +160,18 @@ st.once('downloadspeed', speed => {
 	setState('upload');
 	speed *= multiplier;
 	const download = roundTo(speed, speed >= 10 && !cli.flags.json ? 0 : 1);
-	stats.download = cli.flags.json ? download : chalk.cyan(download + ' ' + chalk.dim(unit));
+	stats.download = cli.flags.json
+		? download
+		: chalk.cyan(download + ' ' + chalk.dim(unit));
 });
 
 st.once('uploadspeed', speed => {
 	setState('');
 	speed *= multiplier;
 	const upload = roundTo(speed, speed >= 10 && !cli.flags.json ? 0 : 1);
-	stats.upload = cli.flags.json ? upload : chalk.cyan(upload + ' ' + chalk.dim(unit));
+	stats.upload = cli.flags.json
+		? upload
+		: chalk.cyan(upload + ' ' + chalk.dim(unit));
 });
 
 st.on('data', data => {

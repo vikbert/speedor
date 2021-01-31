@@ -1,13 +1,12 @@
 {
-	"name": "speed-test",
-	"version": "2.1.0",
-	"description": "Test your internet connection speed and ping using speedtest.net from the CLI",
+	"name": "speedor",
+	"version": "1.0.0",
+	"description": "Test wlan connection speed and ping using speedtest.net from the CLI",
 	"license": "MIT",
-	"repository": "sindresorhus/speed-test",
+	"repository": "vikbert/speedor",
 	"author": {
-		"name": "Sindre Sorhus",
-		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"name": "Xun Zhou",
+		"url": "https://vikbert.github.io/"
 	},
 	"bin": "cli.js",
 	"engines": {
@@ -42,7 +41,8 @@
 		"ora": "^3.1.0",
 		"round-to": "^3.0.0",
 		"speedtest-net": "^1.2.4",
-		"update-notifier": "^2.3.0"
+		"update-notifier": "^2.3.0",
+		"wifi-name": "^3.1.1"
 	},
 	"devDependencies": {
 		"ava": "^1.2.1",
