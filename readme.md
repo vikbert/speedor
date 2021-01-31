@@ -1,24 +1,40 @@
-# wlanr
+<div align="center">
+    <img src="docs/speedor.png" width="200">
+</div>
 
-> Test wlan internet connection speed and ping using [speedtest.net](https://www.speedtest.net) from the CLI
+<div align="center">
+  <p> Test the internet connection speed and ping <strong>speedtest.net</strong> from the CLI</p>
 
-<img src="screenshot.gif" width="404">
+  <p>
+    <a href="#">
+      <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat-square" alt="PRs Welcome">
+    </a>
+    <a href="#">
+      <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=flat-square" alt="MIT License">
+    </a>
+  </p>
+</div>
 
+<div align="center">
+  <img src="docs/speedor.gif" width="400">
+</div>
 
-## Install
+---
 
+## Starting started
 ```bash
-$ npm install --global wlanr
+$ npm install --global speedor
+$ speedor
 ```
 
 
 ## Usage
 
 ```
-$ speed-test --help
+$ speedor --help
 
   Usage
-    $ speed-test
+    $ speedor
 
   Options
     --json -j     Output the result as JSON
@@ -27,16 +43,6 @@ $ speed-test --help
 ```
 
 
-## Links
-
-- [Product Hunt post](https://www.producthunt.com/posts/speed-test-cli)
-
-
-## Related
-
-- [fast-cli](https://github.com/sindresorhus/fast-cli) - Test your download speed using fast.com
-
-
 ## License
 
-MIT © [Sindre Sorhus](https://sindresorhus.com)
+MIT © [vikbert](https://vikbert.github.io)
